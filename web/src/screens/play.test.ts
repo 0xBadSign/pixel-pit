@@ -418,7 +418,7 @@ describe('Play screen (mounted)', () => {
     expect(items[0]!.textContent).toContain('FRESH'); // painted at 12,061,050 > safe
     expect(items[0]!.querySelector('a')?.getAttribute('href')).toContain(`${CONFIG.EXPLORER}/tx/`);
     expect(items[1]!.textContent).toContain('SETTLED');
-    expect(m.q('.complete-line')?.textContent).toBe(copy.COMPLETE_LINE('0', '12,061,040'));
+    expect(m.q('.complete-line')?.textContent).toBe(copy.COMPLETE_LINE(CONFIG.PIT_DEPLOY_BLOCK.toLocaleString('en-US'), '12,061,040'));
     const strip = m.q('.strip')!.textContent!;
     expect(strip).toContain('Core height 8,473 · settledThroughRound 1,246');
     expect(strip).toContain('last settlement: Squeek block 8,473 (+43) · round 1,246 · ETH block 12,061,000');

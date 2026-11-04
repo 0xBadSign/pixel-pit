@@ -1,9 +1,10 @@
 // How screen (SPEC §6.4 "#/how", §7). A static explainer: 60-second rules opening with the §1 mechanic
 // sentence, the exact Squeekchain surface used, the §6.5 trust model + label legend, the §7.10 deployment
-// note ({date}/{tx} marked TODO-before-submit), the §7.11 season note, prior art, bots/genesis notes, known
+// note ({date}/{tx} marked as not filled yet), the §7.11 season note, prior art, bots/genesis notes, known
 // limits, faucets, addresses + Blockscout + repo placeholder and the `forge snapshot` placeholder.
 // Every §7 string comes from copy.ts. Strings that §7 does not pin (rules, surface, trust rows, prior art,
 // limits, headings) live in HOW below so the integrator can hoist them into copy.ts in one move.
+import gasSnapshot from '../gas-snapshot.txt?raw';
 import * as copy from '../copy';
 import { CONFIG, CAP } from '../config';
 import { el, shortAddr } from '../format';
@@ -11,7 +12,14 @@ import type { Store, AppState } from '../state';
 import type { Route } from '../router';
 
 const ZERO = '0x0000000000000000000000000000000000000000';
-const TODO = 'TODO before submit';
+const TODO = 'not filled yet';
+/** Facts filled at the Season 1 deploy (2026-11-04); the live deployment check below re-verifies the Core side on every load. */
+const DEPLOY_FACTS = {
+  date: '2026-11-04',
+  lastDocsSettleDate: '2026-10-26',
+  lastDocsSettleTx: '0x502d216baff7732ac31ab59b8e3b44911b33834c6b3ca5ad3b7e1c18fbd20eb0',
+  repoUrl: 'https://github.com/0xBadSign/pixel-pit',
+} as const;
 
 // ---- strings not pinned by §7 (factual, from SPEC §1, §3.4, §6.3, §6.4, §6.5, §10.1, §11 C-5) ----
 const HOW = {
@@ -59,10 +67,8 @@ const HOW = {
   hPrior: 'Prior art',
   prior: [
     ['Wheel Canvas', 'signers add one stroke each through a token approve(self, 0) call to an artwork drawn by the hamster; no pixel choice, no block-gated budget.'],
-    ['Squeek Canvas', null],
     ['Night Canvas', 'art rendered from settlement telemetry; no players, nothing to paint.'],
     ['Squeek Garden', 'reads the Core event feed and renders it; viewing only, no per-wallet paint budget.'],
-    ['Wheelprints', null],
   ],
   priorPh: 'one-line difference — verify the project before describing it',
   hBots: 'Bots',
@@ -89,6 +95,7 @@ const HOW = {
   pitPh: 'PIT address, filled after the Season 1 deploy',
   hGas: 'Gas (forge snapshot)',
   gasPh: 'paste the `forge snapshot` output (.gas-snapshot) here',
+  gasNote: 'Local Foundry measurements (whole tests, Cancun gas schedule). Sepolia itself currently prices new storage much higher: the Season 1 deploy used 11,618,905 gas on-chain versus 3,110,529 in the local simulation (measured 2026-11-04), so expect join() and fresh-word paint() calls to cost several times the local figures.',
 } as const;
 
 // ---- helpers ----
@@ -178,7 +185,7 @@ export function mount(root: HTMLElement, store: Store, _route?: Route): () => vo
 
   // deployment note (§7.10) with {date}/{tx} placeholders + live check line
   let live = depLine(store.get());
-  page.append(section(HOW.hDeployment, el('p', null, ...withPlaceholders(copy.DEPLOYMENT_NOTE('{date}', '{date}', '{tx}'), { date: 'date', tx: 'tx' })), live));
+  page.append(section(HOW.hDeployment, el('p', { text: copy.DEPLOYMENT_NOTE(DEPLOY_FACTS.date, DEPLOY_FACTS.lastDocsSettleDate, DEPLOY_FACTS.lastDocsSettleTx) }), live));
 
   // season note (§7.11)
   page.append(section(HOW.hSeason, el('p', null, ...(pitSet ? [copy.SEASON_NOTE(CONFIG.PIT)] : withPlaceholders(copy.SEASON_NOTE('{PIT}'), { PIT: HOW.pitPh })))));
@@ -198,12 +205,12 @@ export function mount(root: HTMLElement, store: Store, _route?: Route): () => vo
   page.append(
     section(
       HOW.hContracts,
-      el('dl', null, addrRow(HOW.corePinned, CONFIG.CORE, ''), addrRow(HOW.implExpected, CONFIG.EXPECTED_IMPL, ''), addrRow(HOW.pitSeason, pitSet ? CONFIG.PIT : null, HOW.pitPh), el('div', { class: 'addr-row' }, el('dt', { text: HOW.repo }), el('dd', null, ph(HOW.repoPh)))),
+      el('dl', null, addrRow(HOW.corePinned, CONFIG.CORE, ''), addrRow(HOW.implExpected, CONFIG.EXPECTED_IMPL, ''), addrRow(HOW.pitSeason, pitSet ? CONFIG.PIT : null, HOW.pitPh), el('div', { class: 'addr-row' }, el('dt', { text: HOW.repo }), el('dd', { class: 'addr mono' }, el('a', { href: DEPLOY_FACTS.repoUrl, target: '_blank', rel: 'noopener noreferrer' }, DEPLOY_FACTS.repoUrl.replace('https://', ''))))),
     ),
   );
 
   // forge snapshot placeholder (§5.10: estimates are replaced by the real snapshot; no unlabelled numbers here)
-  page.append(section(HOW.hGas, el('pre', null, ph(HOW.gasPh))));
+  page.append(section(HOW.hGas, el('p', { class: 'muted', text: HOW.gasNote }), el('pre', { text: gasSnapshot.trimEnd() })));
 
   root.append(style, page);
 

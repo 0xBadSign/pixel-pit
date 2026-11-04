@@ -178,7 +178,7 @@ describe('Board screen DOM (SPEC §6.4, §6.5)', () => {
   it('Crews tab: completeness line, labelled cells held / strokes, bots note, never "final"', () => {
     const { root, body } = mountWith({ tick, lastGood: tick, logs: snapshot(j, p, 12_061_055n) }, 'crews');
     const text = root.textContent ?? '';
-    expect(text).toContain(copy.COMPLETE_LINE(CONFIG.PIT_DEPLOY_BLOCK.toString(), '12,061,040'));
+    expect(text).toContain(copy.COMPLETE_LINE(CONFIG.PIT_DEPLOY_BLOCK.toLocaleString('en-US'), '12,061,040'));
     expect(text).toContain(copy.BOARD_BOTS_NOTE);
     expect(text).not.toMatch(/\bfinal\b/i);
     expect(root.querySelector('[aria-selected="true"]')?.textContent).toBe('Crews');

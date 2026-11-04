@@ -5,7 +5,7 @@
 //   - dist/ is missing, or any dist file contains "PLACEHOLDER-UUID" or "TODO before submit",
 //   - src/deployment.json still has the zero PIT address / PIT_DEPLOY_BLOCK 0 / empty GENESIS_CELLS,
 //   - public/logs-bootstrap.json is missing or is for another chain / Pit (tools/bootstrap-logs.ts output),
-//   - no README (repo root README.md or web/README.md) carries the §7.3 Tester line, or it still says "TODO before submit",
+//   - no README (repo root README.md or docs/WEB-NOTES.md) carries the §7.3 Tester line, or it still says "TODO before submit",
 //   - the built index.html lost the squeekchain-project meta or the §7.1 footer.
 // Everything it checks is a fact of the build on disk; it never talks to the network.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
