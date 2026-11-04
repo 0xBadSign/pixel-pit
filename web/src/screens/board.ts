@@ -205,7 +205,7 @@ export function mount(root: HTMLElement, store: Store, route?: Route): void | ((
 function renderTabs(tabs: HTMLElement, rerender: () => void): void {
   clear(tabs);
   const mk = (id: BoardTab, label: string) => {
-    const b = el('button', { class: 'board-tab', type: 'button', role: 'tab', 'aria-selected': String(currentTab === id), text: label });
+    const b = el('button', { class: 'btn board-tab', type: 'button', role: 'tab', 'aria-selected': String(currentTab === id), text: label });
     b.addEventListener('click', () => {
       currentTab = id;
       rerender();
@@ -217,7 +217,7 @@ function renderTabs(tabs: HTMLElement, rerender: () => void): void {
 
 /** STUB — Nights tab is stretch B (SPEC §4); a disabled tab marks the slot. */
 export function mountNightsTab(): HTMLElement {
-  return el('button', { class: 'board-tab', type: 'button', role: 'tab', disabled: true, 'aria-selected': 'false', title: NOT_IN_V1, text: TAB_NIGHTS });
+  return el('button', { class: 'btn board-tab', type: 'button', role: 'tab', disabled: true, 'aria-selected': 'false', title: NOT_IN_V1, text: TAB_NIGHTS });
 }
 
 /** STUB — painter card `#/board?p=0x…` is stretch B (SPEC §4); renders a marked placeholder only. */

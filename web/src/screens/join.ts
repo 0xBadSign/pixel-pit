@@ -5,7 +5,7 @@
 import { encodeFunctionData, type Hex } from 'viem';
 import { CONFIG, CREW_NAMES, CREW_COLORS, crewName } from '../config';
 import * as copy from '../copy';
-import { el, clear, fmtEth, fmtInt, shortAddr, shortHash } from '../format';
+import { el, div, button, clear, fmtEth, fmtInt, shortAddr, shortHash } from '../format';
 import { blockLabel, type AppState, type Store } from '../state';
 import { pixelPitAbi } from '../abi';
 import { describeError, sendPitTx, type DiscoveredProvider, type SentTx } from '../wallet';
@@ -48,7 +48,7 @@ export function txLink(hash: Hex): HTMLAnchorElement {
 
 export function tag(label: 'SETTLED' | 'FRESH' | 'PENDING' | 'PROVISIONAL' | 'UNKNOWN' | 'INCOMPLETE' | 'PRACTICE' | 'FORFEITED'): HTMLElement {
   // §6.5: FRESH carries the "not yet safe" tooltip everywhere it appears
-  return el('span', { class: `tag tag-${label.toLowerCase()}`, title: label === 'FRESH' ? copy.TOOLTIP_NOT_YET_SAFE : undefined, text: label });
+  return el('span', { class: `tag tag-${label.toLowerCase()}`, title: label === copy.LABEL_FRESH ? copy.TOOLTIP_NOT_YET_SAFE : undefined, text: label });
 }
 
 /** Wallet of the connected account, or null. */
@@ -121,10 +121,10 @@ export function createJoinBody(container: HTMLElement, ctx: JoinContext): { rend
       const ev = s.logs?.joined.find((j) => j.player.toLowerCase() === w.address.toLowerCase());
       if (ev && s.lastGood) {
         container.append(
-          el('div', { class: 'join-done' }, tag(blockLabel(ev.blockNumber, s.lastGood.safe)), ' ', copy.FEED_JOINED(fmtInt(ev.coreHeight), crewName(ev.crew)), ' ', txLink(ev.txHash)),
+          div('join-done', el('span', { class: 'mono' }, `${LOCAL.wallet} ${shortAddr(w.address)} · `), tag(blockLabel(ev.blockNumber, s.lastGood.safe)), ' ', copy.FEED_JOINED(fmtInt(ev.coreHeight), crewName(ev.crew)), ' ', txLink(ev.txHash)),
         );
       } else {
-        container.append(el('div', { class: 'join-done muted' }, tag(s.logs?.incomplete ? 'INCOMPLETE' : 'UNKNOWN'), ' ', LOCAL.joinedNoLog));
+        container.append(div('join-done muted', tag(s.logs?.incomplete ? copy.LABEL_INCOMPLETE : copy.LABEL_UNKNOWN), ' ', LOCAL.joinedNoLog));
       }
       return;
     }
@@ -132,41 +132,40 @@ export function createJoinBody(container: HTMLElement, ctx: JoinContext): { rend
     // sent, not mined
     if (local.txHash && s.pendingTx && s.pendingTx.hash === local.txHash) {
       container.dataset.state = 'pending';
-      container.append(el('div', { class: 'join-pending' }, tag('PENDING'), ' ', copy.WORD_PENDING_SENT, ' ', txLink(local.txHash)));
+      container.append(div('join-pending', tag(copy.LABEL_PENDING), ' ', copy.WORD_PENDING_SENT, ' ', txLink(local.txHash)));
       return;
     }
 
     container.dataset.state = 'open';
     // 1) wallet
-    const walletBox = el('div', { class: 'join-step join-wallet' });
+    const walletBox = div('join-step join-wallet');
     if (!w) {
-      walletBox.append(el('div', { class: 'join-step-title', text: LOCAL.chooseWallet }));
+      walletBox.append(div('join-step-title', LOCAL.chooseWallet));
       const providers = s.wallet.providers;
       if (providers.length === 0) {
-        walletBox.append(el('div', { class: 'muted', text: copy.ERR_NO_WALLET }));
+        walletBox.append(div('muted', copy.ERR_NO_WALLET));
       } else {
-        const list = el('div', { class: 'provider-list' });
+        const list = div('provider-list');
         for (const p of providers) {
-          const btn = el('button', { type: 'button', class: 'provider-btn', 'data-rdns': p.info.rdns });
+          const btn = el('button', { type: 'button', class: 'btn provider-btn', 'data-rdns': p.info.rdns });
           if (p.info.icon) btn.append(el('img', { src: p.info.icon, alt: '', width: '18', height: '18' }));
           btn.append(p.info.name);
-          btn.addEventListener('click', () => void ctx.actions?.connectWallet(p));
+          btn.onclick = () => void ctx.actions?.connectWallet(p);
           list.append(btn);
         }
         walletBox.append(list);
       }
     } else {
-      walletBox.append(el('div', { class: 'mono' }, `${LOCAL.wallet} ${shortAddr(w.address)}`));
+      walletBox.append(div('mono', `${LOCAL.wallet} ${shortAddr(w.address)}`));
       if (w.wrongNetwork) {
-        const sw = el('button', { type: 'button', class: 'btn btn-red', text: `${copy.ERR_WRONG_NETWORK} · ${copy.WALLET_SWITCH}` });
-        sw.addEventListener('click', () => void ctx.actions?.switchChain());
+        const sw = button(`${copy.ERR_WRONG_NETWORK} · ${copy.WALLET_SWITCH}`, () => void ctx.actions?.switchChain(), false, 'btn btn-red');
         walletBox.append(sw);
       }
       // 2) balance / faucets (balance comes from the tick provider at the pinned block; FRESH)
-      const bal = w.balanceWei === null ? tag('UNKNOWN') : el('span', {}, `${fmtEth(w.balanceWei)} ETH `, tag('FRESH'));
-      walletBox.append(el('div', { class: 'join-balance' }, `${LOCAL.balance}: `, bal));
+      const bal = w.balanceWei === null ? tag(copy.LABEL_UNKNOWN) : el('span', {}, `${fmtEth(w.balanceWei)} ETH `, tag(copy.LABEL_FRESH));
+      walletBox.append(div('join-balance', `${LOCAL.balance}: `, bal));
       if (w.lowBalance) {
-        const f = el('div', { class: 'faucets' }, el('div', { class: 'muted', text: copy.WALLET_LOW_BALANCE }));
+        const f = div('faucets', div('muted', copy.WALLET_LOW_BALANCE));
         for (const x of copy.FAUCETS) f.append(el('a', { href: x.url, target: '_blank', rel: 'noopener noreferrer' }, x.name), ' ');
         walletBox.append(f);
       }
@@ -174,16 +173,16 @@ export function createJoinBody(container: HTMLElement, ctx: JoinContext): { rend
     container.append(walletBox);
 
     // 3) crew pick
-    const crewBox = el('div', { class: 'join-step join-crews' }, el('div', { class: 'join-step-title', text: LOCAL.chooseCrew }));
-    const row = el('div', { class: 'crew-row' });
+    const crewBox = div('join-step join-crews', div('join-step-title', LOCAL.chooseCrew));
+    const row = div('crew-row');
     CREW_NAMES.forEach((name, i) => {
-      const btn = el('button', { type: 'button', class: 'crew-btn', 'data-crew': String(i), 'aria-pressed': local.crew === i ? 'true' : 'false' });
+      const btn = el('button', { type: 'button', class: 'btn crew-btn', 'data-crew': String(i), 'aria-pressed': local.crew === i ? 'true' : 'false' });
       btn.style.setProperty('--crew', CREW_COLORS[i] ?? '#fff');
       btn.append(el('span', { class: 'crew-dot' }), name);
-      btn.addEventListener('click', () => {
+      btn.onclick = () => {
         local.crew = i;
         render(ctx.store.get());
-      });
+      };
       row.append(btn);
     });
     crewBox.append(row);
@@ -196,10 +195,9 @@ export function createJoinBody(container: HTMLElement, ctx: JoinContext): { rend
     const reason = joinDisabledReason(s, local.crew);
     // wrong network does not disable JOIN: pressing it asks the wallet to switch to Sepolia first (nothing is sent before that)
     const wrongNet = reason === copy.REASON_WRONG_NETWORK;
-    const btn = el('button', { type: 'button', class: 'btn btn-primary join-btn', disabled: (reason !== null && !wrongNet) || local.sending, text: LOCAL.joinButton });
-    btn.addEventListener('click', () => void doJoin());
-    const why = el('div', { class: 'reason muted', text: reason ?? '' });
-    container.append(el('div', { class: 'join-actions' }, btn, why));
+    const btn = button(LOCAL.joinButton, () => void doJoin(), (reason !== null && !wrongNet) || local.sending, 'btn btn-primary join-btn');
+    const why = div('reason muted', reason ?? '');
+    container.append(div('join-actions', btn, why));
     if (local.error) container.append(el('div', { class: 'error', role: 'alert', text: local.error }));
   };
 
@@ -231,19 +229,17 @@ export function createJoinBody(container: HTMLElement, ctx: JoinContext): { rend
   return { render, local };
 }
 
-/** Rail card (Play): visible until the connected wallet has joined. */
+/** Rail card (Play): the full card until the connected wallet has joined, then one line (wallet · Joined at …). */
 export function mountJoinCard(container: HTMLElement, ctx: JoinContext): { render: (s: AppState) => void } {
   container.className = 'card join-card';
-  const title = el('h3', { text: LOCAL.join });
   const body = el('div');
-  container.append(title, body);
+  container.append(el('summary', {}, el('h3', { text: LOCAL.join })), body); // <summary>: play.ts mounts it in a <details>
   const inner = createJoinBody(body, ctx);
   return {
     render(s: AppState) {
       const w = connectedWallet(s);
       const b = budgetOf(s);
-      const joined = !!(w && b && b.coreOk && b.joined);
-      container.hidden = joined && !(inner.local.txHash && s.pendingTx?.hash === inner.local.txHash);
+      container.classList.toggle('join-collapsed', !!(w && b && b.coreOk && b.joined));
       inner.render(s);
     },
   };
@@ -253,8 +249,8 @@ export function mountJoinCard(container: HTMLElement, ctx: JoinContext): { rende
 export function openJoinSheet(ctx: JoinContext): () => void {
   const backdrop = el('div', { class: 'sheet-backdrop', role: 'presentation' });
   const sheet = el('div', { class: 'sheet join-sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': LOCAL.join });
-  const head = el('div', { class: 'sheet-head' }, el('h3', { text: LOCAL.join }));
-  const closeBtn = el('button', { type: 'button', class: 'btn', text: LOCAL.close });
+  const head = div('sheet-head', el('h3', { text: LOCAL.join }));
+  const closeBtn = button(LOCAL.close, () => close());
   head.append(closeBtn);
   const body = el('div');
   sheet.append(head, body);
@@ -271,10 +267,9 @@ export function openJoinSheet(ctx: JoinContext): () => void {
     document.removeEventListener('keydown', onKey);
     backdrop.remove();
   };
-  closeBtn.addEventListener('click', close);
-  backdrop.addEventListener('click', (ev) => {
+  backdrop.onclick = (ev) => {
     if (ev.target === backdrop) close();
-  });
+  };
   document.addEventListener('keydown', onKey);
   return close;
 }

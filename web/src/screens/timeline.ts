@@ -195,9 +195,9 @@ export function mount(root: HTMLElement, store: Store, route: Route = parseHash(
 
   // controls
   const controls = el('div', { class: 'tl-controls' });
-  const playBtn = el('button', { type: 'button', class: 'tl-play', text: TL.PLAY });
-  const speedBtns = TL.SPEEDS.map((x) => el('button', { type: 'button', class: 'tl-speed', 'data-speed': String(x), 'aria-pressed': x === 1 ? 'true' : 'false', text: TL.SPEED(x) }));
-  const copyBtn = el('button', { type: 'button', class: 'tl-copy', text: TL.COPY_LINK });
+  const playBtn = el('button', { type: 'button', class: 'btn tl-play', text: TL.PLAY });
+  const speedBtns = TL.SPEEDS.map((x) => el('button', { type: 'button', class: 'btn tl-speed', 'data-speed': String(x), 'aria-pressed': x === 1 ? 'true' : 'false', text: TL.SPEED(x) }));
+  const copyBtn = el('button', { type: 'button', class: 'btn tl-copy', text: TL.COPY_LINK });
   const copied = el('span', { class: 'tl-copied muted', 'aria-live': 'polite' });
   controls.append(playBtn, ...speedBtns, copyBtn, copied);
 

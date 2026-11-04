@@ -74,6 +74,18 @@ export function el<K extends keyof HTMLElementTagNameMap>(
   return e;
 }
 
+/** `<div class=cls>…</div>`: the most common node (strings become text nodes). */
+export function div(cls: string, ...children: (Node | string | null | undefined)[]): HTMLDivElement {
+  return el('div', { class: cls }, ...children);
+}
+
+/** <button type=button class=cls> with a click handler. */
+export function button(text: string, onClick: () => void, disabled = false, cls = 'btn'): HTMLButtonElement {
+  const b = el('button', { type: 'button', class: cls, disabled, text });
+  b.onclick = onClick;
+  return b;
+}
+
 export function clear(node: HTMLElement): void {
   while (node.firstChild) node.removeChild(node.firstChild);
 }

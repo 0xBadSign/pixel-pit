@@ -101,6 +101,26 @@ button {
   margin: 0 auto;
 }
 
+/* Play (screens/play.ts): three columns on wide screens; from 1280 x 700 the page itself does not scroll, the two
+   rails do, and the canvas is squared to the free height (container-query units, see .canvas-slot there). */
+#app > main[data-route='/'] {
+  max-width: 1600px;
+}
+
+@media (min-width: 1280px) and (min-height: 700px) {
+  @supports (height: 1cqh) {
+    body:has(main[data-route='/']) {
+      height: 100dvh;
+      overflow: hidden;
+    }
+    #app:has(main[data-route='/']),
+    #app > main[data-route='/'] {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+  }
+}
+
 .muted {
   color: var(--muted);
 }
@@ -109,10 +129,8 @@ button {
   font-family: var(--mono);
 }
 
-/* buttons: physical key press (hover lift, active drop) */
-.btn,
-.board-tab,
-.tl-controls button {
+/* buttons: physical key press (hover lift, active drop); board tabs and timeline controls carry .btn too */
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -127,24 +145,18 @@ button {
 }
 
 .btn:hover,
-.board-tab:hover,
-.tl-controls button:hover,
 .chip-btn:hover {
   border-color: #5a4d80;
   transform: translateY(-1px);
   box-shadow: 0 4px 0 var(--shadow);
 }
 
-.btn:active,
-.board-tab:active,
-.tl-controls button:active {
+.btn:active {
   transform: translateY(2px);
   box-shadow: 0 1px 0 var(--shadow);
 }
 
-.btn:disabled,
-.board-tab:disabled,
-.tl-controls button:disabled {
+.btn:disabled {
   opacity: 0.5;
   box-shadow: none;
   transform: none;
@@ -297,10 +309,6 @@ button {
   color: var(--green);
 }
 
-.chip-green-soft {
-  border-color: var(--line);
-}
-
 .chip-red {
   border-color: var(--red);
   color: var(--red-text);
@@ -418,10 +426,6 @@ button {
   background: var(--red);
 }
 
-.dot-grey {
-  background: var(--grey);
-}
-
 /* banners */
 .banners {
   display: flex;
@@ -537,10 +541,6 @@ button {
   padding: 16px;
 }
 
-.todo {
-  font-family: var(--mono);
-}
-
 @media (max-width: 640px) {
   .topbar {
     gap: 8px;
@@ -568,8 +568,6 @@ button {
     animation: pressstart 1.2s steps(2) 4;
   }
   .btn,
-  .board-tab,
-  .tl-controls button,
   .chip-btn {
     transition: transform 80ms ease-out, box-shadow 80ms ease-out, border-color 120ms;
   }
