@@ -77,7 +77,14 @@ export function listWithFallback(found: Map<string, DiscoveredProvider>, w?: EIP
       provider: eth,
     });
   }
-  return list;
+  return list.sort((a, b) => rank(a.info.rdns) - rank(b.info.rdns) || a.info.name.localeCompare(b.info.name));
+}
+
+/** Well-known EVM wallets first; multi-chain wallets that also announce an EVM provider (e.g. Keplr) go last. */
+const EVM_FIRST = ['io.metamask', 'io.rabby', 'com.coinbase.wallet', 'app.phantom', 'com.brave.wallet', 'xyz.frame', 'com.trustwallet.app', 'com.okex.wallet'];
+function rank(rdns: string): number {
+  const i = EVM_FIRST.indexOf(rdns);
+  return i === -1 ? EVM_FIRST.length : i;
 }
 
 export async function connect(p: DiscoveredProvider): Promise<{ address: Address; chainId: number }> {

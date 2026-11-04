@@ -164,15 +164,16 @@ let activeFilter: boolean | null = null; // null = follow the default (on once 2
 // Scoped styles (integrator may hoist into style.css). INCOMPLETE tables: grey italic numbers (SPEC §6.5).
 const STYLE =
   '.board-tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}' +
-  '.board-tab{background:var(--panel);color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:4px 10px}' +
-  '.board-tab[aria-selected=true]{color:var(--fg);border-color:var(--blue)}.board-tab:disabled{opacity:.5;cursor:default}' +
+  '.board-tab{font:16px/1.5 var(--pixel);text-transform:uppercase;padding-top:7px;color:var(--muted)}' +
+  '.board-tab[aria-selected=true]{color:var(--amber);box-shadow:inset 0 -3px 0 var(--amber)}' +
   '.board-line,.board-filter{font-family:var(--mono);font-size:12px;color:var(--muted);margin:8px 0;display:flex;gap:6px;align-items:center;flex-wrap:wrap}' +
-  '.board-wrap{overflow-x:auto}.board-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}' +
+  '.board-wrap{overflow-x:auto;border:2px solid var(--line);border-radius:6px;background:var(--panel);box-shadow:var(--bevel);padding:6px}' +
+  '.board-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}' +
   '.board-table th,.board-table td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}' +
-  '.board-table th{color:var(--muted);font-weight:400}.board-table .num{text-align:right}' +
+  '.board-table th{color:var(--muted);font-weight:400;font-size:11px;text-transform:uppercase}.board-table tbody tr:nth-child(odd) td{background:rgba(255,255,255,.03)}.board-table .num{text-align:right}' +
   '.board-incomplete td.num{color:var(--muted);font-style:italic}.board-table td.unknown{color:var(--muted)}' +
   '.board-swatch{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}' +
-  '.board-you td{background:var(--bg-2)}.board-note{max-width:72ch;margin-top:16px;font-size:12px}';
+  '.board-table .board-you td{background:rgba(255,191,105,.12)}.board-you td:first-child{border-left:3px solid var(--amber)}.board-note{max-width:72ch;margin-top:16px;font-size:12px}';
 
 type Lbl = 'SETTLED' | 'FRESH' | 'UNKNOWN' | 'INCOMPLETE';
 

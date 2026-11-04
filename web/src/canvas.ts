@@ -37,6 +37,11 @@ export class PitCanvas {
   private raf: number | null = null;
   private ro: ResizeObserver | null = null;
   private dpr = 1;
+  // in-canvas juice (decorative only, never time-derived from chain data): paint pop on a clicked/dragged cell and a
+  // one-shot ripple on cells that just became FRESH (an observed mined block). Both are skipped under reduced motion.
+  private reduceMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  private pops = new Map<number, number>(); // cell -> start ms
+  private ripples = new Map<number, number>(); // cell -> start ms
 
   constructor(
     readonly container: HTMLElement,
@@ -74,7 +79,14 @@ export class PitCanvas {
   }
 
   private fitCellPx(): number {
-    const w = this.container.clientWidth || WIDTH * 12;
+    // measure the container's content box: clientWidth includes padding (the .canvas-wrap bezel), and a canvas wider
+    // than the content box would be CSS-shrunk off the pixel grid (blurry cells, hover math off)
+    let w = this.container.clientWidth;
+    if (w && typeof getComputedStyle === 'function') {
+      const cs = getComputedStyle(this.container);
+      w -= (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+    }
+    if (!(w > 0)) w = WIDTH * 12;
     return Math.max(8, Math.floor(w / WIDTH));
   }
 
@@ -95,7 +107,10 @@ export class PitCanvas {
     this.requestDraw();
   }
 
-  setFresh(fresh: ReadonlySet<number>): void {
+  /** Replace the FRESH set. Ripples fire only with `animate: true`, which the caller passes when the set changed
+   *  because a new block was observed (never on first render, a mode switch or a timeline scrub). */
+  setFresh(fresh: ReadonlySet<number>, opts: { animate?: boolean } = {}): void {
+    if (opts.animate && !this.reduceMotion) for (const c of fresh) if (!this.fresh.has(c)) this.ripples.set(c, performance.now());
     this.fresh = new Set(fresh);
     this.requestDraw();
   }
@@ -202,7 +217,10 @@ export class PitCanvas {
         this.requestDraw();
       }
       this.onHover?.(hit ? { ...hit, clientX: ev.clientX, clientY: ev.clientY } : null);
-      if (this.dragging && hit && this.onDrag) this.onDrag(hit.cell, ev);
+      if (this.dragging && hit && this.onDrag) {
+        this.pop(hit.cell);
+        this.onDrag(hit.cell, ev);
+      }
     });
     c.addEventListener('pointerleave', () => {
       this.hoverCell = null;
@@ -222,6 +240,7 @@ export class PitCanvas {
       if (!hit) return;
       this.dragging = true;
       c.setPointerCapture(ev.pointerId);
+      this.pop(hit.cell);
       this.onCell?.(hit.cell, ev);
     });
     const end = (ev: PointerEvent) => {
@@ -253,6 +272,12 @@ export class PitCanvas {
   }
 
   // ---------- drawing ----------
+
+  private pop(cell: number): void {
+    if (this.reduceMotion) return;
+    this.pops.set(cell, performance.now());
+    this.requestDraw();
+  }
 
   requestDraw(): void {
     if (this.raf !== null) return;
@@ -328,7 +353,7 @@ export class PitCanvas {
         ctx.globalAlpha = 0.85;
         ctx.fillRect(x, y, cellPx, cellPx);
         ctx.globalAlpha = 1;
-        ctx.strokeStyle = 'rgba(0,0,0,0.55)';
+        ctx.strokeStyle = 'rgba(0,0,0,0.7)';
         ctx.lineWidth = 1;
         ctx.beginPath();
         const step = Math.max(3, Math.floor(cellPx / 3));
@@ -338,17 +363,55 @@ export class PitCanvas {
         }
         ctx.rect(x + 0.5, y + 0.5, cellPx - 1, cellPx - 1);
         ctx.stroke();
+        ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+        ctx.strokeRect(x + 1.5, y + 1.5, cellPx - 3, cellPx - 3);
       }
       ctx.restore();
     }
 
-    // hover
-    if (this.hoverCell !== null) {
-      const i = this.hoverCell;
+    // paint pop (180 ms shrinking white frame) + fresh ripple (400 ms expanding blue frame); crisp strokes, no blur
+    const now = performance.now();
+    for (const [i, t0] of this.pops) {
+      const k = (now - t0) / 180;
+      if (k >= 1) {
+        this.pops.delete(i);
+        continue;
+      }
+      const inset = Math.round((1 - k) * cellPx * 0.5);
+      ctx.globalAlpha = 1 - k;
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 2;
-      ctx.strokeRect((i & 31) * cellPx + 1, (i >> 5) * cellPx + 1, cellPx - 2, cellPx - 2);
+      ctx.strokeRect((i & 31) * cellPx + inset + 1, (i >> 5) * cellPx + inset + 1, cellPx - 2 * inset - 2, cellPx - 2 * inset - 2);
+    }
+    for (const [i, t0] of this.ripples) {
+      const t = (now - t0) / 400;
+      if (t >= 1) {
+        this.ripples.delete(i);
+        continue;
+      }
+      const e = Math.round(t * cellPx * 1.5);
+      ctx.globalAlpha = (1 - t) * 0.9;
+      ctx.strokeStyle = '#3a86ff';
+      ctx.lineWidth = 1;
+      ctx.strokeRect((i & 31) * cellPx - e + 0.5, (i >> 5) * cellPx - e + 0.5, cellPx + 2 * e - 1, cellPx + 2 * e - 1);
+    }
+    ctx.globalAlpha = 1;
+
+    // hover: ink-outlined cream frame (readable on white, amber and pit-black cells)
+    // frame width scales with the cell so small (phone, zoom 1) cells keep their colour core and their own borders
+    if (this.hoverCell !== null) {
+      const i = this.hoverCell;
+      const bw = cellPx >= 16 ? 4 : 2;
+      const x = (i & 31) * cellPx + bw / 2;
+      const y = (i >> 5) * cellPx + bw / 2;
+      ctx.strokeStyle = '#0a0712';
+      ctx.lineWidth = bw;
+      ctx.strokeRect(x, y, cellPx - bw, cellPx - bw);
+      ctx.strokeStyle = '#f3eefb';
+      ctx.lineWidth = bw / 2;
+      ctx.strokeRect(x, y, cellPx - bw, cellPx - bw);
     }
     ctx.restore();
+    if (this.pops.size || this.ripples.size) this.requestDraw();
   }
 }

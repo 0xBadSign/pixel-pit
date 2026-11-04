@@ -228,9 +228,22 @@ async function connectWallet(p?: DiscoveredProvider): Promise<void> {
     return;
   }
   try {
-    const { address, chainId } = await connect(chosen);
+    const connected = await connect(chosen);
+    const { address } = connected;
+    let { chainId } = connected;
     selectedProvider = chosen;
     walletAddress = address;
+    // Pixel Pit lives on Sepolia only: ask the wallet to switch right away (MetaMask keeps a per-site network,
+    // so the wallet UI may show Sepolia while this site is still on another chain). A refusal just leaves the
+    // 'Wrong network · Switch to Sepolia' button; nothing is sent without the right chain.
+    if (chainId !== CONFIG.chainId) {
+      try {
+        await switchToSepolia(chosen.provider);
+        chainId = Number(BigInt((await chosen.provider.request({ method: 'eth_chainId' })) as Hex));
+      } catch (e) {
+        console.warn('[wallet] switch to Sepolia declined', e);
+      }
+    }
     providerCleanup?.();
     providerCleanup = onProviderEvents(chosen.provider, {
       accountsChanged: (a) => {

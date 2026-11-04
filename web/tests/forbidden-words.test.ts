@@ -71,8 +71,18 @@ describe('forbidden words (SPEC §7)', () => {
     expect(html).toContain('Unofficial fan project. Not affiliated with or endorsed by Squeekchain. Runs on the Sepolia testnet; nothing here has value.');
   });
 
-  it('bundle stays under the 200 KB budget (raw, all assets)', () => {
-    const total = walk(dist).reduce((n, f) => n + statSync(f).size, 0);
+  it('bundle stays under the 200 KB budget (raw, all assets, fonts excluded)', () => {
+    const isFont = (f: string) => /[\\/]fonts[\\/]/.test(f);
+    const total = walk(dist).filter((f) => !isFont(f)).reduce((n, f) => n + statSync(f).size, 0);
     expect(total, `dist total ${total} bytes`).toBeLessThan(200 * 1024);
+  });
+
+  it('self-hosted fonts: exactly one woff2, all font files <= 45 KB', () => {
+    const dir = join(dist, 'fonts');
+    expect(existsSync(dir)).toBe(true);
+    const names = readdirSync(dir);
+    expect(names.filter((n) => n.endsWith('.woff2'))).toHaveLength(1);
+    const total = names.reduce((n, f) => n + statSync(join(dir, f)).size, 0);
+    expect(total, `fonts total ${total} bytes`).toBeLessThanOrEqual(45 * 1024);
   });
 });

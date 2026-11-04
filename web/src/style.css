@@ -1,19 +1,56 @@
+/* Marquee Pit theme. Tokens shared with screens/play.ts and canvas.ts; only this file defines them. */
 :root {
-  --bg: #0b0d12;
-  --bg-2: #11141b;
-  --panel: #161a23;
-  --line: #262b36;
-  --fg: #e8eaf0;
-  --muted: #8b93a3;
-  --green: #8ac926;
-  --blue: #3a86ff;
+  --bg: #15111f;
+  --bg-2: #1c172a;
+  --panel: #241d36;
+  --panel-2: #2f2749;
+  --line: #3d3358;
+  --shadow: #0a0712;
+  --ink: #15111f;
+  --fg: #f3eefb;
+  --muted: #aba3c4;
   --amber: #ffbf69;
+  --amber-edge: #c98a3a;
+  --amber-shadow: #8a5a1a;
+  --pink: #ff70a6;
+  --cyan: #4cc9f0;
+  --green: #8ac926;
+  --green-edge: #5f8f10;
+  --blue: #3a86ff;
+  --blue-text: #8ab8ff;
   --red: #e63946;
+  --red-text: #ff8a8a;
   --yellow: #ffd166;
   --violet: #7b2cbf;
+  --violet-edge: #5a1d8f;
   --grey: #5c6370;
+  --tag-dark: #2b2b33;
+  --tag-amber-bg: #2a2017;
+  --tag-amber-edge: #7a5a2a;
+  --crew-wheel: #ffbf69;
+  --crew-burrow: #a0522d;
+  --crew-seed: #8ac926;
+  --crew-moon: #4cc9f0;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --sans: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --pixel: 'Silkscreen', ui-monospace, Consolas, monospace;
+  --marquee: repeating-linear-gradient(90deg, var(--amber) 0 12px, var(--pink) 12px 24px, var(--cyan) 24px 36px, transparent 36px 48px);
+  --ribbon: linear-gradient(90deg, var(--crew-wheel) 0 25%, var(--crew-burrow) 0 50%, var(--crew-seed) 0 75%, var(--crew-moon) 0);
+  --bevel: 0 3px 0 var(--shadow);
+  --glow: 0 0 0 3px #0a0712, 0 0 0 5px var(--amber), 0 0 28px rgba(255, 191, 105, 0.35), 0 6px 0 #0a0712;
+  --glow-practice: 0 0 0 3px #0a0712, 0 0 0 5px var(--violet), 0 0 28px rgba(123, 44, 191, 0.4), 0 6px 0 #0a0712;
+}
+
+/* Self-hosted pixel face (SIL OFL 1.1, see public/fonts/OFL.txt). 8px grid: use at 16px or 24px only.
+   Subset of 99 glyphs: ASCII letters, digits, basic punctuation and the middle dot. Characters outside it
+   (arrows, ≥ ≤, ellipsis) fall back to the monospace face, so keep them out of --pixel strings.
+   index.html preloads the file (same origin) so headings do not reflow when it arrives. */
+@font-face {
+  font-family: 'Silkscreen';
+  src: url('/fonts/Silkscreen-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 * {
@@ -25,9 +62,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--sans);
-  font-size: 14px;
-  line-height: 1.4;
+  font: 14px/1.5 var(--sans);
   min-height: 100%;
 }
 
@@ -38,12 +73,17 @@ body {
 }
 
 a {
-  color: var(--blue);
+  color: var(--cyan);
 }
 
 button {
   font: inherit;
   cursor: pointer;
+}
+
+:is(a, button, [tabindex], input, select):focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
 }
 
 #app {
@@ -69,22 +109,108 @@ button {
   font-family: var(--mono);
 }
 
-/* top bar */
+/* buttons: physical key press (hover lift, active drop) */
+.btn,
+.board-tab,
+.tl-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 2px solid var(--line);
+  border-radius: 4px;
+  background: linear-gradient(var(--panel-2), var(--panel));
+  color: var(--fg);
+  box-shadow: var(--bevel);
+  cursor: pointer;
+}
+
+.btn:hover,
+.board-tab:hover,
+.tl-controls button:hover,
+.chip-btn:hover {
+  border-color: #5a4d80;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 var(--shadow);
+}
+
+.btn:active,
+.board-tab:active,
+.tl-controls button:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--shadow);
+}
+
+.btn:disabled,
+.board-tab:disabled,
+.tl-controls button:disabled {
+  opacity: 0.5;
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  font: 16px/1.5 var(--pixel);
+  text-transform: uppercase;
+  padding: 8px 18px;
+  padding-top: 9px;
+  min-height: 40px;
+  background: var(--amber);
+  color: var(--ink);
+  border-color: var(--amber-edge);
+  box-shadow: 0 3px 0 var(--amber-shadow), 0 0 14px rgba(255, 191, 105, 0.35);
+}
+
+.btn-red {
+  border-color: var(--red);
+  color: var(--red-text);
+}
+
+/* top bar: cabinet marquee above, four-band crew ribbon below */
 .topbar {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 8px 16px;
+  min-height: 56px;
+  padding: 14px 16px 12px;
   background: var(--bg-2);
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
+  box-shadow: var(--bevel);
+}
+
+.topbar::before,
+.topbar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.topbar::before {
+  top: 0;
+  height: 4px;
+  background: var(--marquee);
+}
+
+.topbar::after {
+  bottom: -2px;
+  height: 3px;
+  background: var(--ribbon);
 }
 
 .wordmark {
-  font-family: var(--mono);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--fg);
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding-top: 1px;
+  font: 16px/1.5 var(--pixel);
+  letter-spacing: 0.08em;
+  color: var(--amber);
+  text-shadow: 2px 2px 0 var(--shadow), 0 0 12px rgba(255, 191, 105, 0.55);
   text-decoration: none;
 }
 
@@ -94,17 +220,29 @@ button {
 }
 
 .nav a {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 12px;
+  border: 2px solid transparent;
+  font: 700 13px/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--muted);
   text-decoration: none;
-  padding: 4px 8px;
-  border-radius: 4px;
+}
+
+.nav a:hover {
+  color: var(--fg);
 }
 
 .nav a[aria-current='page'] {
   color: var(--fg);
-  background: var(--panel);
+  background: var(--panel-2);
+  border-color: var(--line);
+  box-shadow: inset 0 -3px 0 var(--amber);
 }
 
+/* chips */
 .chips {
   display: flex;
   align-items: center;
@@ -124,21 +262,38 @@ button {
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
+  gap: 6px;
+  min-height: 28px;
+  padding: 5px 10px;
   border-radius: 999px;
-  border: 1px solid var(--line);
+  border: 2px solid var(--line);
   background: var(--panel);
   color: var(--fg);
+  box-shadow: 0 2px 0 var(--shadow);
   white-space: nowrap;
 }
 
 .chip-btn {
-  border-color: var(--blue);
+  min-height: 32px;
+  background: var(--amber);
+  color: var(--ink);
+  border-color: var(--amber-edge);
+  font-weight: 700;
+  box-shadow: 0 3px 0 var(--amber-shadow);
+  cursor: pointer;
+}
+
+.chip-btn:hover {
+  border-color: var(--amber-edge);
+  box-shadow: 0 4px 0 var(--amber-shadow);
+}
+
+.chip-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--amber-shadow);
 }
 
 .chip-green {
-  border-color: var(--green);
   color: var(--green);
 }
 
@@ -148,7 +303,14 @@ button {
 
 .chip-red {
   border-color: var(--red);
-  color: var(--red);
+  color: var(--red-text);
+}
+
+.chip-red.chip-btn {
+  background: var(--panel);
+  color: var(--red-text);
+  border-color: var(--red);
+  box-shadow: 0 3px 0 var(--shadow);
 }
 
 .chip-yellow {
@@ -162,52 +324,76 @@ button {
 
 /* honesty labels, same colour and word everywhere (SPEC §6.5) */
 .tag {
-  display: inline-block;
-  padding: 0 5px;
-  border-radius: 3px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 2px 7px;
+  border: 2px solid transparent;
+  border-radius: 2px;
+  font: 700 11px/1.3 var(--mono);
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 .tag-settled {
   background: var(--green);
-  color: #0b0d12;
+  color: var(--ink);
+  border-color: var(--green-edge);
 }
 
 .tag-fresh {
-  border: 1px solid var(--blue);
-  color: var(--blue);
+  background: var(--bg-2);
+  border-color: var(--blue);
+  color: var(--blue-text);
 }
 
 .tag-pending {
-  background: repeating-linear-gradient(45deg, var(--grey) 0 3px, transparent 3px 6px);
+  background: repeating-linear-gradient(45deg, #3a3f4a 0 3px, #262a33 3px 6px);
+  border: 2px dashed var(--grey);
   color: var(--fg);
+  text-shadow: 0 0 2px #000, 0 0 2px #000;
 }
 
 .tag-provisional {
+  background: var(--tag-amber-bg);
+  border-color: var(--tag-amber-edge);
   color: var(--amber);
 }
 
+.tag-provisional::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  margin-right: 5px;
+}
+
 .tag-unknown {
-  color: var(--muted);
-  border: 1px solid var(--grey);
+  background: var(--tag-dark);
+  border: 2px dotted var(--muted); /* >= 3:1 on --tag-dark: the dotted edge is UNKNOWN's cue */
+  color: #d6d2e3;
 }
 
 .tag-incomplete {
-  color: var(--muted);
+  background: var(--tag-dark);
+  border-color: var(--grey);
+  border-left: 4px solid var(--yellow);
+  color: #d6d2e3;
   font-style: italic;
 }
 
 .tag-practice {
   background: var(--violet);
   color: #fff;
+  border-color: var(--violet-edge);
 }
 
 .tag-forfeited {
+  background: var(--tag-amber-bg);
+  border-color: var(--amber);
   color: var(--amber);
-  border: 1px solid var(--amber);
 }
 
 .dot {
@@ -216,6 +402,7 @@ button {
   height: 8px;
   border-radius: 50%;
   background: var(--grey);
+  outline: 2px solid var(--bg-2);
 }
 
 .dot-green {
@@ -243,39 +430,48 @@ button {
 }
 
 .banner {
-  padding: 6px 16px;
+  padding: 8px 16px;
   font-size: 13px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
+  border-left: 6px solid;
 }
 
 .banner-info {
   background: #14202e;
   color: var(--fg);
+  border-left-color: var(--cyan);
 }
 
 .banner-warn {
   background: #2e2614;
   color: var(--yellow);
+  border-left-color: var(--yellow);
 }
 
 .banner-error {
   background: #2e1416;
-  color: var(--red);
+  color: var(--red-text);
+  border-left-color: var(--red);
 }
 
 /* battery */
 .battery {
-  font-family: var(--mono);
-  font-size: 13px;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
+  font: 13px/1.5 var(--mono);
+  padding: 12px;
+  border: 2px solid var(--line);
   border-radius: 6px;
-  background: var(--panel);
+  background: var(--bg-2);
+  box-shadow: inset 0 2px 0 var(--shadow), var(--bevel);
+}
+
+.battery[data-state='unknown'] {
+  border-style: dotted;
 }
 
 .battery-ready {
-  font-size: 16px;
-  font-weight: 700;
+  font: 700 16px/1.4 var(--mono);
+  color: var(--amber);
+  text-shadow: 0 0 10px rgba(255, 191, 105, 0.5);
 }
 
 .battery-line + .battery-line {
@@ -287,7 +483,24 @@ button {
   font-size: 11px;
 }
 
-/* canvas */
+/* measured READY out of 40 cells; width comes from the last good tick, never from time */
+.battery-meter {
+  height: 14px;
+  margin: 8px 0;
+  border: 2px solid var(--line);
+  background: repeating-linear-gradient(90deg, transparent 0 calc(2.5% - 1px), var(--shadow) calc(2.5% - 1px) 2.5%) var(--bg);
+}
+
+.battery-meter::before {
+  content: '';
+  display: block;
+  height: 100%;
+  width: calc(var(--ready, 0) / 40 * 100%);
+  background: var(--amber);
+  box-shadow: 0 0 8px rgba(255, 191, 105, 0.6);
+}
+
+/* canvas (play.ts overrides border/margin; never add filter/opacity/transform here) */
 .pit-canvas {
   display: block;
   image-rendering: pixelated;
@@ -299,12 +512,25 @@ button {
 
 /* footer (SPEC §7.1) */
 .footer {
+  position: relative;
   flex-shrink: 0;
-  padding: 12px 16px;
-  border-top: 1px solid var(--line);
+  padding: 14px 16px;
+  border-top: 2px solid var(--line);
+  background: var(--bg-2);
   color: var(--muted);
-  font-size: 12px;
+  font: 12px/1.5 var(--sans);
   text-align: center;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: var(--marquee);
+  opacity: 0.4;
 }
 
 .noscript {
@@ -322,9 +548,72 @@ button {
   .chips {
     margin-left: 0;
     width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding: 4px 2px 6px; /* room for the 2px focus ring + offset and the 3px bevel inside the scroll box */
   }
   #app > main,
   #app > .screen {
     padding: 12px 16px;
   }
+}
+
+/* motion: decorative only, constant speed, nothing derives from chain data; finite runs (WCAG 2.2.2: nothing
+   blinks or moves for longer than 5 s without a control) */
+@media (prefers-reduced-motion: no-preference) {
+  .topbar::before {
+    animation: marquee 1.6s steps(4) 3;
+  }
+  .chip-wallet.chip-btn {
+    animation: pressstart 1.2s steps(2) 4;
+  }
+  .btn,
+  .board-tab,
+  .tl-controls button,
+  .chip-btn {
+    transition: transform 80ms ease-out, box-shadow 80ms ease-out, border-color 120ms;
+  }
+  .battery-meter::before {
+    transition: width 0.3s steps(8);
+  }
+}
+
+@keyframes marquee {
+  to {
+    background-position: 48px 0;
+  }
+}
+
+@keyframes pressstart {
+  50% {
+    box-shadow: 0 3px 0 var(--amber-shadow), 0 0 14px rgba(255, 191, 105, 0.7);
+    opacity: 0.85;
+  }
+}
+
+@keyframes flash-hold {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition: none !important;
+  }
+  .flash {
+    animation: flash-hold 3s steps(1) forwards;
+    animation-duration: 3s !important;
+  }
+}
+
+/* Join-card nudge: a Live-canvas click without a joined wallet points here (finite, 0.6 s, no motion under reduce) */
+.nudge { outline: 3px solid var(--amber); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) {
+  .nudge { animation: nudge 0.6s ease-out 1; }
+  @keyframes nudge { 0% { transform: translateX(0); } 25% { transform: translateX(-4px); } 50% { transform: translateX(4px); } 75% { transform: translateX(-2px); } 100% { transform: translateX(0); } }
 }

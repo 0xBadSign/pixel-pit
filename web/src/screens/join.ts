@@ -194,7 +194,9 @@ export function createJoinBody(container: HTMLElement, ctx: JoinContext): { rend
 
     // 5) JOIN
     const reason = joinDisabledReason(s, local.crew);
-    const btn = el('button', { type: 'button', class: 'btn btn-primary join-btn', disabled: reason !== null || local.sending, text: LOCAL.joinButton });
+    // wrong network does not disable JOIN: pressing it asks the wallet to switch to Sepolia first (nothing is sent before that)
+    const wrongNet = reason === copy.REASON_WRONG_NETWORK;
+    const btn = el('button', { type: 'button', class: 'btn btn-primary join-btn', disabled: (reason !== null && !wrongNet) || local.sending, text: LOCAL.joinButton });
     btn.addEventListener('click', () => void doJoin());
     const why = el('div', { class: 'reason muted', text: reason ?? '' });
     container.append(el('div', { class: 'join-actions' }, btn, why));
@@ -202,7 +204,11 @@ export function createJoinBody(container: HTMLElement, ctx: JoinContext): { rend
   };
 
   const doJoin = async (): Promise<void> => {
-    const s = ctx.store.get();
+    let s = ctx.store.get();
+    if (local.crew !== null && joinDisabledReason(s, local.crew) === copy.REASON_WRONG_NETWORK) {
+      await ctx.actions?.switchChain();
+      s = ctx.store.get();
+    }
     if (local.crew === null || joinDisabledReason(s, local.crew) !== null) return;
     local.sending = true;
     local.error = null;

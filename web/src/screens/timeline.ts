@@ -166,11 +166,11 @@ const CSS = `
 .tl-canvas{width:min(100%,calc(100vh - 280px));min-width:256px;margin:0 auto}
 .tl-sub{min-height:1.4em;font-family:var(--mono);font-size:12px}
 .tl-controls{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-family:var(--mono);font-size:12px}
-.tl-controls button{padding:4px 10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:4px;font-family:var(--mono);font-size:12px}
-.tl-controls button[aria-pressed="true"]{border-color:var(--blue);color:var(--blue)}
-.tl-controls button:disabled{opacity:.5;cursor:default}
+.tl-controls button{font-family:var(--mono);font-size:12px}
+.tl-controls button[aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
+.tl-panel{display:inline-block;padding:4px 10px;border:2px solid var(--line);border-radius:6px;background:var(--panel);box-shadow:var(--bevel)}
 .tl-slider{position:relative;padding:4px 0 0}
-.tl-slider input{width:100%;margin:0;display:block;accent-color:var(--green)}
+.tl-slider input{width:100%;margin:0;display:block;min-height:32px;accent-color:var(--amber)}
 .tl-ticks{position:relative;height:14px;margin-top:2px}
 .tl-tick{position:absolute;top:0;width:1px;height:7px;background:var(--muted)}
 .tl-tick-sel{background:var(--fg);width:2px;height:14px}

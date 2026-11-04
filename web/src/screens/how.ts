@@ -152,17 +152,18 @@ function depLine(s: AppState): HTMLElement {
 
 // Screen-local styles (hoist into style.css if the integrator prefers one sheet).
 const STYLE = `
-.how{max-width:860px;margin:0 auto}.how h1{font-size:22px;margin:0 0 6px}
-.how h2{font-size:13px;margin:28px 0 8px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.how{max-width:860px;margin:0 auto}.how h1{font:24px/1.5 var(--pixel);text-transform:uppercase;color:var(--amber);text-shadow:2px 2px 0 var(--shadow);margin:0 0 6px;padding-top:1px}
+.how h2{font:16px/1.5 var(--pixel);text-transform:uppercase;color:var(--amber);margin:0 0 8px;padding-top:1px}
+.how section{border:2px solid var(--line);border-radius:6px;background:var(--panel);box-shadow:var(--bevel);padding:12px 14px;margin:14px 0}
 .how p,.how li,.how dd{line-height:1.55}.how p{margin:8px 0}.how ol,.how ul{padding-left:22px;margin:6px 0}.how li{margin:6px 0}
-.how .lead{font-size:16px;font-weight:600}
+.how .lead{font-size:15px;font-weight:600}
 .how table{border-collapse:collapse;width:100%;font-size:13px}.how th,.how td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}.how th{background:var(--panel)}
-.how .legend{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:baseline}
+.how .legend{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline}
 .how-ph{background:#3a2d12;color:var(--yellow);border:1px dashed var(--yellow);border-radius:3px;padding:0 4px;font-family:var(--mono);font-size:12px}
 .how pre{background:var(--panel);border:1px solid var(--line);padding:10px;overflow:auto;font-size:12px;white-space:pre-wrap}
 .how dl{margin:0}.how .addr-row{margin:8px 0}.how dt{color:var(--muted);font-size:12px}.how dd{margin:0;word-break:break-all;font-size:13px}
 .how .live{border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--panel);font-family:var(--mono);font-size:12px;margin:10px 0}
-.how .chip-ok{color:var(--green)}.how .chip-bad{color:var(--red)}.how .faucets a{word-break:break-all}
+.how .chip-ok{color:var(--green)}.how .chip-bad{color:var(--red-text)}.how .faucets a{word-break:break-all}
 `;
 
 export function mount(root: HTMLElement, store: Store, _route?: Route): () => void {

@@ -22,14 +22,17 @@ export function renderBattery(container: HTMLElement, m: BatteryModel): void {
       container.append(
         el('div', { class: 'battery-line label-unknown' }, el('span', { class: 'tag tag-unknown', text: copy.LABEL_UNKNOWN }), ' ', el('span', { class: 'battery-unknown', text: copy.BATTERY_UNKNOWN(fmtUtcHHMM(m.asOfMs)) })),
         el('div', { class: 'battery-foot muted', text: copy.WORD_UNKNOWN(fmtUtcHHMM(m.asOfMs)) }),
-      );
+      ); // no meter here: a 0..40 track would read as "0", and numbers are unknown, not zero
       return;
     case 'numbers': {
       container.dataset.state = 'numbers';
       const tagClass = m.label === 'SETTLED' ? 'tag tag-settled' : 'tag tag-fresh';
       const arrivedLine = el('div', { class: 'battery-line' }, copy.BATTERY_ARRIVED(fmtInt(m.arrived), fmtInt(m.forfeited)));
       if (m.forfeited > 0n) arrivedLine.append(' ', el('span', { class: 'tag tag-forfeited', text: copy.LABEL_FORFEITED })); // §6.5 FORFEITED label
-      container.append(el('div', { class: 'battery-line battery-ready', text: copy.BATTERY_READY(String(m.ready), String(m.banked), String(m.fresh)) }), arrivedLine);
+      // decorative meter: width is the measured READY of this tick (0..40); no text, no time-based motion
+      const meter = el('div', { class: 'battery-meter', 'aria-hidden': 'true' });
+      meter.style.setProperty('--ready', String(Math.max(0, Math.min(40, Number(m.ready)))));
+      container.append(el('div', { class: 'battery-line battery-ready', text: copy.BATTERY_READY(String(m.ready), String(m.banked), String(m.fresh)) }), meter, arrivedLine);
       if (m.pending !== null && m.pending > 0) {
         container.append(el('div', { class: 'battery-line label-pending' }, el('span', { class: 'tag tag-pending', text: copy.LABEL_PENDING }), ' ', copy.BATTERY_PENDING(String(m.pending))));
       }
