@@ -128,9 +128,8 @@ Other measured figures, from the same file: `test_T1_joinGate` 5,266,219 (many j
 
 ## Squeekchain project listing
 
-squeekchain-project: <uuid>
+squeekchain-project: c2c8374b-d940-4b47-9ee2-1f7dc519ffd8
 
-(TODO before submit: replace `<uuid>` with the project UUID from the direct submission dialog. The same UUID goes into the `<meta name="squeekchain-project">` tag of the deployed site.)
 
 ## License
 
