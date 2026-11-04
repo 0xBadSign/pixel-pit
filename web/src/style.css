@@ -1,0 +1,330 @@
+:root {
+  --bg: #0b0d12;
+  --bg-2: #11141b;
+  --panel: #161a23;
+  --line: #262b36;
+  --fg: #e8eaf0;
+  --muted: #8b93a3;
+  --green: #8ac926;
+  --blue: #3a86ff;
+  --amber: #ffbf69;
+  --red: #e63946;
+  --yellow: #ffd166;
+  --violet: #7b2cbf;
+  --grey: #5c6370;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.4;
+  min-height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--blue);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+#app {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+#app > main,
+#app > .screen {
+  flex: 1 0 auto;
+  padding: 16px;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.mono {
+  font-family: var(--mono);
+}
+
+/* top bar */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 8px 16px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.wordmark {
+  font-family: var(--mono);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  gap: 4px;
+}
+
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.nav a[aria-current='page'] {
+  color: var(--fg);
+  background: var(--panel);
+}
+
+.chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.chip-group {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--fg);
+  white-space: nowrap;
+}
+
+.chip-btn {
+  border-color: var(--blue);
+}
+
+.chip-green {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.chip-green-soft {
+  border-color: var(--line);
+}
+
+.chip-red {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.chip-yellow {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.chip-grey {
+  color: var(--muted);
+}
+
+/* honesty labels, same colour and word everywhere (SPEC §6.5) */
+.tag {
+  display: inline-block;
+  padding: 0 5px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.tag-settled {
+  background: var(--green);
+  color: #0b0d12;
+}
+
+.tag-fresh {
+  border: 1px solid var(--blue);
+  color: var(--blue);
+}
+
+.tag-pending {
+  background: repeating-linear-gradient(45deg, var(--grey) 0 3px, transparent 3px 6px);
+  color: var(--fg);
+}
+
+.tag-provisional {
+  color: var(--amber);
+}
+
+.tag-unknown {
+  color: var(--muted);
+  border: 1px solid var(--grey);
+}
+
+.tag-incomplete {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.tag-practice {
+  background: var(--violet);
+  color: #fff;
+}
+
+.tag-forfeited {
+  color: var(--amber);
+  border: 1px solid var(--amber);
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--grey);
+}
+
+.dot-green {
+  background: var(--green);
+}
+
+.dot-amber,
+.dot-provisional {
+  background: var(--amber);
+}
+
+.dot-red {
+  background: var(--red);
+}
+
+.dot-grey {
+  background: var(--grey);
+}
+
+/* banners */
+.banners {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.banner {
+  padding: 6px 16px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--line);
+}
+
+.banner-info {
+  background: #14202e;
+  color: var(--fg);
+}
+
+.banner-warn {
+  background: #2e2614;
+  color: var(--yellow);
+}
+
+.banner-error {
+  background: #2e1416;
+  color: var(--red);
+}
+
+/* battery */
+.battery {
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+}
+
+.battery-ready {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.battery-line + .battery-line {
+  margin-top: 4px;
+}
+
+.battery-foot {
+  margin-top: 6px;
+  font-size: 11px;
+}
+
+/* canvas */
+.pit-canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background: #05060a;
+  border: 1px solid var(--line);
+  cursor: crosshair;
+}
+
+/* footer (SPEC §7.1) */
+.footer {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.noscript {
+  padding: 16px;
+}
+
+.todo {
+  font-family: var(--mono);
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    gap: 8px;
+  }
+  .chips {
+    margin-left: 0;
+    width: 100%;
+  }
+  #app > main,
+  #app > .screen {
+    padding: 12px 16px;
+  }
+}

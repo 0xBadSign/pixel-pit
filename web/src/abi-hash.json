@@ -1,0 +1,17 @@
+{
+  "_comment": "sha256 over JSON.stringify(abi) with internalType stripped; regenerate with `npm run abi` after `forge build`.",
+  "PixelPit": {
+    "sha256": "6e4b9df3a1d3c56747d4f81081cf9749cc7630a54eec368f733aabaa5f23120f",
+    "entries": 37,
+    "source": "out/PixelPit.sol/PixelPit.json",
+    "compiler": "0.8.28+commit.7893614a",
+    "optimizerRuns": 200,
+    "evmVersion": "cancun",
+    "deployedBytecodeSha256": "0xbf3e02bea35ef7afaf9d08632b861467023f42795e86b197097ce4afa3fac070"
+  },
+  "Core": {
+    "sha256": "79feae2fea1b740de172dec3e562722508169ee744043e15c55311178ad063c1",
+    "entries": 4,
+    "source": "SPEC §5.1 human-readable strings (scripts/gen-abi.mjs CORE_ABI_STRINGS)"
+  }
+}

@@ -1,0 +1,13 @@
+out/
+cache/
+broadcast/
+node_modules/
+web/dist/
+.env
+*.local
+
+# internal planning docs (not part of the public repo)
+SPEC.md
+docs/SPEC.v1.0.bak.md
+docs/RUNBOOK.md
+genesis/hamster-card.png

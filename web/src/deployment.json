@@ -1,0 +1,8 @@
+{
+  "_comment": "Filled after the Season 1 deploy (deployments/sepolia.json). Placeholders keep the build green. PIT = zero address means 'not deployed yet'.",
+  "PIT": "0x0000000000000000000000000000000000000000",
+  "PIT_DEPLOY_BLOCK": 0,
+  "GENESIS_HEIGHT": 0,
+  "GENESIS_CELLS": [],
+  "GENESIS_COLORS": []
+}

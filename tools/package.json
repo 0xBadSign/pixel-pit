@@ -1,0 +1,21 @@
+{
+  "name": "pixel-pit-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "hamster": "tsx hamster-png.ts",
+    "genesis": "tsx genesis.ts",
+    "genesis:season0": "tsx genesis-season0.ts",
+    "bootstrap-logs": "tsx bootstrap-logs.ts",
+    "bootstrap-logs:dry": "tsx bootstrap-logs.ts --dry-run"
+  },
+  "dependencies": {
+    "pngjs": "^7.0.0",
+    "tsx": "^4.19.0",
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/pngjs": "^6.0.5"
+  }
+}
