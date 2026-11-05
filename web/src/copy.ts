@@ -50,12 +50,12 @@ export const DEPLOYMENT_CHANGED =
 
 // §7.10 Deployment note (How + README). {date} and {tx} are filled right before submission.
 export function DEPLOYMENT_NOTE(date: string, lastDate: string, tx: string): string {
-  return `This site reads the SqueekCore proxy 0x980b4424c007caf7a1f3670b48c8eaef7ebc3d44 (release stream-game-sepolia-test-20261026-01, implementation 0x284747c4664af2203e7a90a2ee76f22b6b5e6889). docs.squeekchain.com lists 0x74665dAecA35A2303e767E76a2FF1FB6F93e119f; at the time of writing (${date}), api.squeekchain.com/v1/core reports 0x980b4424…, and the last BatchSettled for 0x74665d… was on ${lastDate} (${tx}). The Pit contract pins the proxy address as an immutable; this page additionally checks the implementation address, its runtime code hash, streamId and genesisTimestamp on every load, and shows the API-reported core address next to the pinned one. Verify yourself: api.squeekchain.com/v1/core and the latest BatchSettled transactions on eth-sepolia.blockscout.com.`;
+  return `This site reads the SqueekCore proxy 0xfd6c166d4b8e2962e65746a13e5a0797cd4de0c4 (installation sepolia-core-sepolia-20261103, implementation 0x6869d6102696243fd17013ab955d99cd0c522ad3), which api.squeekchain.com/v1/core reports as of ${date}. The previous proxy 0x980b4424… stopped producing Squeek blocks at height 8,430 when Squeekchain moved to the new installation on ${lastDate}; Season 1 of Pixel Pit (${tx}) stays frozen there. The Pit contract pins the proxy address as an immutable; this page additionally checks the implementation address, its runtime code hash, streamId and genesisTimestamp on every load, and shows the API-reported core address next to the pinned one. Verify yourself: api.squeekchain.com/v1/core and the latest BatchSettled transactions on eth-sepolia.blockscout.com.`;
 }
 
 // §7.11 Season note (How)
 export function SEASON_NOTE(PIT: string): string {
-  return `Season 1 is this deployment: contract ${PIT}. The canvas is persistent and there is no on-chain reset. If Squeekchain redeploys or upgrades Core in a way the Pit cannot read, or the Core height falls below Season 1's genesis height, Season 1 freezes at its last height and a new Pit is deployed as Season 2. Weekly windows on the Board (Mondays 12:00 UTC) are a display filter, not an on-chain season.`;
+  return `Season 2 is this deployment: contract ${PIT}. The canvas is persistent and there is no on-chain reset. If Squeekchain redeploys or upgrades Core in a way the Pit cannot read, or the Core height falls below this season's genesis height, the season freezes at its last height and a new Pit is deployed as the next season. Weekly windows on the Board (Mondays 12:00 UTC) are a display filter, not an on-chain season.`;
 }
 
 // §7.12 Pending / unknown / fresh wording
@@ -112,8 +112,8 @@ export const ERR_NO_WALLET = 'No wallet found (install one, or just watch)';
 export function ERR_CACHE_REBUILT(N: string): string {
   return `cache rebuilt from block ${N}`;
 }
-export const ERR_CORE_BELOW_GENESIS = 'Core height below Season 1 genesis; Season 1 frozen';
-export const ERR_SEASON2 = 'Season 2 will be a new Pit deployment';
+export const ERR_CORE_BELOW_GENESIS = "Core height below this season's genesis; season frozen";
+export const ERR_SEASON2 = 'The next season will be a new Pit deployment';
 
 // §6.2 / §2.2 deployment chip (top bar)
 export function DEPCHECK_OK(core: string, impl: string): string {
@@ -191,7 +191,7 @@ export const PAINT_SHEET_DESTINATION = 'goes to the Pit contract on Sepolia';
 
 // §2.1 / §6.4 misc
 export function SEASON_STARTED(N: string): string {
-  return `Season 1 started at Squeek block ${N}; first night pending.`;
+  return `Season 2 started at Squeek block ${N}; first night pending.`;
 }
 export function CURRENT_ROUND_DERIVED(round: string): string {
   return `current round ${round} derived from the clock; rounds after the frontier are unknown, not zero`;

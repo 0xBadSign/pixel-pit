@@ -46,7 +46,7 @@ Pixel Pit only reads Squeekchain contracts. It sends no transaction to any Squee
 
 ## Deployment note
 
-This site reads the SqueekCore proxy 0x980b4424c007caf7a1f3670b48c8eaef7ebc3d44 (release stream-game-sepolia-test-20261026-01, implementation 0x284747c4664af2203e7a90a2ee76f22b6b5e6889). docs.squeekchain.com lists 0x74665dAecA35A2303e767E76a2FF1FB6F93e119f; at the time of writing (2026-11-04), api.squeekchain.com/v1/core reports 0x980b4424…, and the last BatchSettled for 0x74665d… was on 2026-10-26 (0x502d216baff7732ac31ab59b8e3b44911b33834c6b3ca5ad3b7e1c18fbd20eb0). The Pit contract pins the proxy address as an immutable; this page additionally checks the implementation address, its runtime code hash, streamId and genesisTimestamp on every load, and shows the API-reported core address next to the pinned one. Verify yourself: api.squeekchain.com/v1/core and the latest BatchSettled transactions on eth-sepolia.blockscout.com.
+This site reads the SqueekCore proxy 0xfd6c166d4b8e2962e65746a13e5a0797cd4de0c4 (installation sepolia-core-sepolia-20261103, implementation 0x6869d6102696243fd17013ab955d99cd0c522ad3), which api.squeekchain.com/v1/core reports as of 2026-11-05. The previous proxy 0x980b4424c007caf7a1f3670b48c8eaef7ebc3d44 stopped producing Squeek blocks at height 8,430 when Squeekchain moved to the new installation on 2026-11-03; Season 1 of Pixel Pit stays frozen there. The Pit contract pins the proxy address as an immutable; this page additionally checks the implementation address, its runtime code hash, streamId and genesisTimestamp on every load, and shows the API-reported core address next to the pinned one. Verify yourself: api.squeekchain.com/v1/core and the latest BatchSettled transactions on eth-sepolia.blockscout.com.
 
 
 ## Prior art
@@ -65,7 +65,8 @@ Sepolia wallets and Sepolia ETH are free. Anyone can create 100 wallets, join th
 
 ## Season 1 contract and tx hashes
 
-- Pit (Season 1): `0x4B1D7d9f8499Ad065a8f883a6E4889B855bB38EF`, deployed 2026-11-04 in block 12063369 (tx 0xab88a5c4b911b52783f393361637f83c84f08c89788d7c31fa8b5edfda35600e), source verified on eth-sepolia.blockscout.com
+- Pit (Season 2, live): `0x0b71E2AeB9EDa244Ba53492efa83f913A37cbD83`, bound to SqueekCore 0xfd6c…e0c4, deployed 2026-11-05 in block 12068519 (tx 0xee35547e0fc814ba759fb72459644cc76af14882e2b388c63eed3a338f5ef278), source verified on eth-sepolia.blockscout.com
+- Pit (Season 1, frozen): `0x4B1D7d9f8499Ad065a8f883a6E4889B855bB38EF`, bound to the previous SqueekCore 0x980b…3d44, deployed 2026-11-04 in block 12063369 (tx 0xab88a5c4b911b52783f393361637f83c84f08c89788d7c31fa8b5edfda35600e); frozen at Squeek block 8,430 after Squeekchain's 2026-11-03 Core migration
 - First join / first paint tx hashes: pending the first live night; they will be added here and are visible in the Feed and Timeline on the site
 - `InsufficientBudget` rejection: covered by `test_T8_workedExample` and `test_T10_spendBankedWithoutNewBlocks` in `test/PixelPit.t.sol`; a live screenshot follows the first live night
 

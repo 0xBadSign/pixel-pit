@@ -13,11 +13,11 @@ import type { Route } from '../router';
 
 const ZERO = '0x0000000000000000000000000000000000000000';
 const TODO = 'not filled yet';
-/** Facts filled at the Season 1 deploy (2026-11-04); the live deployment check below re-verifies the Core side on every load. */
+/** Facts filled at the Season 2 deploy (2026-11-05); the live deployment check below re-verifies the Core side on every load. */
 const DEPLOY_FACTS = {
-  date: '2026-11-04',
-  lastDocsSettleDate: '2026-10-26',
-  lastDocsSettleTx: '0x502d216baff7732ac31ab59b8e3b44911b33834c6b3ca5ad3b7e1c18fbd20eb0',
+  date: '2026-11-05',
+  lastDocsSettleDate: '2026-11-03',
+  lastDocsSettleTx: 'contract 0x4B1D7d9f8499Ad065a8f883a6E4889B855bB38EF',
   repoUrl: 'https://github.com/0xBadSign/pixel-pit',
 } as const;
 
@@ -82,17 +82,17 @@ const HOW = {
     'Offensive pixel art cannot be erased on-chain and there is no moderation; 32×32 cells and 16 colours limit detail, and anyone can overpaint it.',
     'Settlement gaps: when no Squeek block settles, nobody’s brush fills. No countdown or estimate is shown because nobody knows when he runs.',
     'Public RPC endpoints only (Tenderly, publicnode). When both fail the page shows UNKNOWN, never 0; log-derived tables show INCOMPLETE while a chunk is missing.',
-    'If Squeekchain redeploys or upgrades Core in a way the Pit cannot read, Season 1 freezes (see Season).',
+    'If Squeekchain redeploys or upgrades Core in a way the Pit cannot read, the current season freezes (see Season).',
   ],
   hFaucets: 'Sepolia ETH (gas only)',
   hContracts: 'Contracts and source',
   corePinned: 'SqueekCore proxy (pinned)',
   implExpected: 'Expected Core implementation',
-  pitSeason: 'Pixel Pit, Season 1',
+  pitSeason: 'Pixel Pit, Season 2',
   repo: 'Source repository',
   verifiedOn: 'verified source on Blockscout',
   repoPh: 'repo URL',
-  pitPh: 'PIT address, filled after the Season 1 deploy',
+  pitPh: 'PIT address, filled after the Season 2 deploy',
   hGas: 'Gas (forge snapshot)',
   gasPh: 'paste the `forge snapshot` output (.gas-snapshot) here',
   gasNote: 'Local Foundry measurements (whole tests, Cancun gas schedule). Sepolia itself currently prices new storage much higher: the Season 1 deploy used 11,618,905 gas on-chain versus 3,110,529 in the local simulation (measured 2026-11-04), so expect join() and fresh-word paint() calls to cost several times the local figures.',

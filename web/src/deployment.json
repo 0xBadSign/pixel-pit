@@ -1,8 +1,8 @@
 {
-  "_comment": "Season 1 deployment on Sepolia (tx 0xab88a5c4b911b52783f393361637f83c84f08c89788d7c31fa8b5edfda35600e, 2026-11-04). GENESIS_* mirrors test/fixtures/genesis.json.",
-  "PIT": "0x4B1D7d9f8499Ad065a8f883a6E4889B855bB38EF",
-  "PIT_DEPLOY_BLOCK": 12063369,
-  "GENESIS_HEIGHT": 8430,
+  "_comment": "Season 2 on Sepolia, bound to SqueekCore 0xfd6c166d4b8e2962e65746a13e5a0797cd4de0c4 (tx 0xee35547e0fc814ba759fb72459644cc76af14882e2b388c63eed3a338f5ef278, 2026-11-05). Season 1 (0x4B1D7d9f8499Ad065a8f883a6E4889B855bB38EF) is frozen on the previous Core. GENESIS_* mirrors test/fixtures/genesis.json.",
+  "PIT": "0x0b71E2AeB9EDa244Ba53492efa83f913A37cbD83",
+  "PIT_DEPLOY_BLOCK": 12068519,
+  "GENESIS_HEIGHT": 366,
   "GENESIS_CELLS": [
     300,
     301,

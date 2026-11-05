@@ -5,7 +5,7 @@ Unofficial fan project. Sepolia testnet. Nothing here has value. Scope: contract
 ## 1. Shape of the system
 
 ```
-SqueekCore proxy 0x980b…3d44 (read only)
+SqueekCore proxy 0xfd6c…e0c4 (read only; Season 1 used 0x980b…3d44)
    │  state().blockHeight  (STATICCALL, gas cap 60k, 256 bytes)
    ▼
 PixelPit (immutable CORE, no admin, no upgrade)  ── events: Joined, Painted, GenesisSeeded

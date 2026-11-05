@@ -9,7 +9,7 @@ import {PixelPit} from "../src/PixelPit.sol";
 ///         Season 0 throwaway: GENESIS_JSON=script/genesis-season0.json.
 ///         Signer comes from the forge CLI (--private-key / --account / --ledger); nothing is read here.
 contract Deploy is Script {
-    address internal constant LIVE_CORE = 0x980B4424c007CAf7a1f3670B48c8EaEf7EbC3d44;
+    address internal constant LIVE_CORE = 0xFD6C166D4B8E2962E65746a13e5a0797CD4dE0c4;
 
     function run() external returns (PixelPit pit) {
         address core = vm.envOr("CORE", LIVE_CORE);
